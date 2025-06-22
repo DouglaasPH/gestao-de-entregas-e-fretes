@@ -14,12 +14,12 @@ class ProductionConfig:
 
 class DevelopmentConfig:
     SECRET_KEY ='dev'
-    #SQLALCHEMY_DATABASE_URI ='sqlite:///diobank.sqlite'
+    SQLALCHEMY_DATABASE_URI ='sqlite:///database.sqlite'
     JWT_SECRET_KEY ='super-secret'
 
 
 class TestingConfig:
     TESTING = True
     SECRET_KEY='test'
-    #SQLALCHEMY_DATABASE_URI = "sqlite://"
+    SQLALCHEMY_DATABASE_URI = "sqlite://"
     JWT_SECRET_KEY = 'test'

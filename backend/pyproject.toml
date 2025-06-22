@@ -16,6 +16,7 @@ dependencies = [
     "flask-marshmallow",
     "marshmallow-sqlalchemy",
     "apispec-webframeworks",
+    "flask-apispec[swagger]",
 ]
 
 [tool.poetry]
