@@ -1,0 +1,53 @@
+# Ambiente Virtual
+venv/
+.env/
+.venv/
+
+# Arquivos de configuração locais
+*.env
+*.env.*
+
+# __pycache__ e arquivos compilados Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Banco de dados SQLite local
+*.sqlite3
+*.db
+
+# Migrations geradas (se quiser não versionar)
+#migrations/
+
+# Logs
+*.log
+logs/
+
+# IDEs e editores
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos de cache e temporários
+.cache/
+*.bak
+*.tmp
+*.swp
+
+# Documentação gerada (se for gerar)
+docs/_build/
+
+# Pytest e testes
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Dependências (se gerar com pip freeze além do pyproject)
+pip-wheel-metadata/
+dist/
+build/
