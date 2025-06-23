@@ -1,8 +1,8 @@
 """Initial migration.
 
-Revision ID: 2078685a865f
+Revision ID: 95d9b3118584
 Revises: 
-Create Date: 2025-06-22 14:28:51.058444
+Create Date: 2025-06-23 02:44:02.753514
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2078685a865f'
+revision = '95d9b3118584'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -32,11 +32,11 @@ def upgrade():
     )
     op.create_table('points_of_sale',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('cnpj', sa.String(), nullable=False),
-    sa.Column('telephone', sa.String(), nullable=False),
-    sa.Column('address', sa.String(), nullable=False),
+    sa.Column('cnpj_encrypted', sa.String(), nullable=False),
+    sa.Column('telephone_encrypted', sa.String(), nullable=False),
+    sa.Column('address_encrypted', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('cnpj')
+    sa.UniqueConstraint('cnpj_encrypted')
     )
     op.create_table('role',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -57,31 +57,31 @@ def upgrade():
     )
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(), nullable=False),
-    sa.Column('cpf', sa.String(), nullable=False),
-    sa.Column('telephone', sa.String(), nullable=False),
-    sa.Column('email', sa.String(), nullable=False),
+    sa.Column('name_encrypted', sa.String(), nullable=False),
+    sa.Column('cpf_encrypted', sa.String(), nullable=False),
+    sa.Column('telephone_encrypted', sa.String(), nullable=False),
+    sa.Column('email_encrypted', sa.String(), nullable=False),
     sa.Column('password', sa.String(), nullable=False),
     sa.Column('role_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['role_id'], ['role.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('cpf'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('name')
+    sa.UniqueConstraint('cpf_encrypted'),
+    sa.UniqueConstraint('email_encrypted'),
+    sa.UniqueConstraint('name_encrypted')
     )
     op.create_table('driver',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('cnh', sa.String(), nullable=False),
+    sa.Column('cnh_encrypted', sa.String(), nullable=False),
     sa.Column('driver_status_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['driver_status_id'], ['driver_status.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('cnh')
+    sa.UniqueConstraint('cnh_encrypted')
     )
     op.create_table('vehicle',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('plate', sa.String(), nullable=False),
+    sa.Column('plate_encrypted', sa.String(), nullable=False),
     sa.Column('model', sa.String(), nullable=False),
     sa.Column('capacity', sa.String(), nullable=False),
     sa.Column('vehicle_type_id', sa.Integer(), nullable=False),
@@ -89,7 +89,7 @@ def upgrade():
     sa.ForeignKeyConstraint(['driver_id'], ['driver.id'], ),
     sa.ForeignKeyConstraint(['vehicle_type_id'], ['vehicle_type.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('plate')
+    sa.UniqueConstraint('plate_encrypted')
     )
     op.create_table('orders',
     sa.Column('id', sa.Integer(), nullable=False),

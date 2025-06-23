@@ -18,10 +18,10 @@ INSERT INTO role(name) VALUES ('admin'), ('manager'), ('operator'), ('driver');
 
 CREATE TABLE user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT UNIQUE NOT NULL,
-    cpf TEXT UNIQUE NOT NULL,
-    telephone TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
+    name_encrypted TEXT UNIQUE NOT NULL,
+    cpf_encrypted TEXT UNIQUE NOT NULL,
+    telephone_encrypted TEXT NOT NULL,
+    email_encrypted TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     role_id INTEGER NOT NULL,
     FOREIGN KEY (role_id) REFERENCES role (id)
@@ -29,9 +29,9 @@ CREATE TABLE user (
 
 CREATE TABLE points_of_sale (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    cnpj TEXT UNIQUE NOT NULL,
-    telephone TEXT NOT NULL,
-    address TEXT NOT NULL
+    cnpj_encrypted TEXT UNIQUE NOT NULL,
+    telephone_encrypted TEXT NOT NULL,
+    address_encrypted TEXT NOT NULL
 );
 
 CREATE TABLE driver_status (
@@ -44,7 +44,7 @@ INSERT INTO driver_status(name) VALUES ('active'), ('inactive'), ('traveling'), 
 CREATE TABLE driver (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
-    cnh TEXT UNIQUE NOT NULL,
+    cnh_encrypted TEXT UNIQUE NOT NULL,
     driver_status_id INTEGER DEFAULT 2,
     FOREIGN KEY (driver_status_id) REFERENCES driver_status (id),
     FOREIGN KEY (user_id) REFERENCES user (id)
@@ -59,7 +59,7 @@ INSERT INTO vehicle_type(name) VALUES ('van'), ('light truck'), ('medium truck')
 
 CREATE TABLE vehicle (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    plate TEXT UNIQUE NOT NULL,
+    plate_encrypted TEXT UNIQUE NOT NULL,
     model TEXT NOT NULL,
     vehicle_type_id INTEGER NOT NULL,
     capacity TEXT NOT NULL,
