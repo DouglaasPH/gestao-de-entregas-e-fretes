@@ -15,8 +15,8 @@ from src.views.user import CreateUserSchema, UserSchema
 
 app = Blueprint('user', __name__, url_prefix='/users')
 
-#@jwt_required()
-#@requires_role('admin')
+@jwt_required()
+@requires_role(['admin'])
 def _create_user():
     user_schema = CreateUserSchema()
     
@@ -39,8 +39,8 @@ def _create_user():
     return { 'message': 'User created!' }, HTTPStatus.CREATED
 
 
-#@jwt_required()
-#@requires_role('admin')
+@jwt_required()
+@requires_role(['admin'])
 def _list_users():
     query = db.select(User)
     users = db.session.execute(query).scalars().all()
@@ -48,10 +48,47 @@ def _list_users():
     return user_schema.dump(users)
     
 
-
 @app.route('/', methods=['GET', 'POST'])
 def list_or_create_user():
     if request.method == 'POST':
         return _create_user()
     else:
         return { 'users': _list_users() }, HTTPStatus.OK
+
+
+@jwt_required()
+@requires_role(['admin'])
+@app.route('/<int:user_id>')
+def get_user(user_id):
+    user = db.get_or_404(User, user_id)
+    user_schema = UserSchema()
+    return user_schema.dump(user)
+
+
+@jwt_required()
+@requires_role(['admin'])
+@app.route('/<int:user_id>', methods=['PATCH'])
+def update_user(user_id):
+    user = db.get_or_404(User, user_id)
+    data = request.json
+    
+    mapper = inspect(User)
+    for column in mapper.attrs:
+        if column.key in data:
+            setattr(user, column.key, data[column.key])
+    if 'email' in data:
+        user.email_hash = hashlib.sha256(data['email'].encode()).hexdigest()
+    db.session.comit()
+    
+    return { 'message': 'User updated.' }, HTTPStatus.OK
+
+
+@jwt_required()
+@requires_role(['admin'])
+@app.route('/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    user = db.get_or_404(User, user_id)
+    db.session.delete(user)
+    db.session.commit()
+    
+    return "", HTTPStatus.NO_CONTENT
