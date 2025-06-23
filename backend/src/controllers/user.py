@@ -72,13 +72,19 @@ def update_user(user_id):
     user = db.get_or_404(User, user_id)
     data = request.json
     
-    mapper = inspect(User)
-    for column in mapper.attrs:
-        if column.key in data:
-            setattr(user, column.key, data[column.key])
-    if 'email' in data:
-        user.email_hash = hashlib.sha256(data['email'].encode()).hexdigest()
-    db.session.comit()
+    for key in ['name', 'cpf', 'telephone', 'email']:
+        if key in data:
+            setattr(user, key, data[key])
+            if key == 'email':
+                user.email_hash = hashlib.sha256(data['email'].encode()).hexdigest()
+
+    if 'password' in data:
+        user.password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+
+    if 'role_id' in data:
+        user.role_id = data['role_id']
+    
+    db.session.commit()
     
     return { 'message': 'User updated.' }, HTTPStatus.OK
 
