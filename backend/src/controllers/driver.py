@@ -76,6 +76,23 @@ def update_driver(driver_id):
 
 # @jwt_required()
 # @requires_role(['admin'])
+@app.route('/<int:driver_id>/driver_status', methods=['PATCH'])
+def update_driver_status(driver_id):
+    driver = db.get_or_404(Driver, driver_id)
+    data = request.json
+    key = 'driver_status_id'
+    
+    if key in data:
+        setattr(driver, key, data[key])
+        db.session.commit()
+    
+        return { 'message': 'Driver updated.' }, HTTPStatus.OK
+    else:
+        return { 'message': 'The required field "driver_status_id" was not sent or is missing. This request must contain only the "driver_status_id" field.' }, HTTPStatus.BAD_REQUEST
+
+
+# @jwt_required()
+# @requires_role(['admin'])
 @app.route('/<int:driver_id>', methods=['DELETE'])
 def delete_user(driver_id):
     driver = db.get_or_404(Driver, driver_id)
