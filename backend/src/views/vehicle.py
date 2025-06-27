@@ -6,13 +6,13 @@ from src.views.driver import DriverSchema
 
 class CreateVehicleSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        only = ('plate', 'model', 'vehicle_type_id', 'capacity', 'driver_id')
+        only = ('plate', 'model', 'vehicle_type_id', 'capacity_per_kilo', 'driver_id')
         unknown = RAISE
         
     plate = fields.String(required=True)                  # Mandatory
     model = fields.String(required=True)                  # Mandatory
     vehicle_type_id = fields.Integer(required=True)       # Mandatory
-    capacity = fields.String(required=True)               # Mandatory
+    capacity_per_kilo = fields.String(required=True)      # Mandatory
     driver_id = fields.Integer(required=True)             # Mandatory
 
 
@@ -25,7 +25,7 @@ class VehicleSchema(ma.SQLAlchemyAutoSchema):
     plate = fields.String(required=True)                  # Mandatory
     model = fields.String(required=True)                  # Mandatory
     vehicle_type_id = fields.Integer(required=True)       # Mandatory
-    capacity = fields.String(required=True)               # Mandatory
+    capacity_per_kilo = fields.String(required=True)      # Mandatory
     driver_id = fields.Integer(required=True)             # Mandatory
 
     vehicle_type = ma.Nested(VehicleTypeSchema)
