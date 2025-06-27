@@ -74,7 +74,7 @@ def update_driver_status(driver_status_id):
 # @jwt_required()
 # @requires_role(['admin'])
 @app.route('/<int:driver_status_id>', methods=['DELETE'])
-def delete_user(driver_status_id):
+def delete_drive_status(driver_status_id):
     driver_status = db.get_or_404(Driver_status, driver_status_id)
     db.session.delete(driver_status)
     db.session.commit()

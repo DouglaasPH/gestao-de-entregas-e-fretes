@@ -32,13 +32,16 @@ def create_app(environment=os.environ['ENVIRONMENT']):
     db_init_app(app)
     
     # register blueprints
-    from src.controllers import user, auth, points_of_sale, driver_status, driver
+    from src.controllers import user, auth, points_of_sale, driver_status, driver, vehicle_type, vehicle
     
     app.register_blueprint(user.app)
     app.register_blueprint(auth.app)
     app.register_blueprint(points_of_sale.app)
     app.register_blueprint(driver_status.app)
     app.register_blueprint(driver.app)
+    app.register_blueprint(vehicle_type.app)
+    app.register_blueprint(vehicle.app)
+    
     
     @app.route('/')
     def hello(): 
