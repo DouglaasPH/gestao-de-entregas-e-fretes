@@ -18,7 +18,7 @@ class DriverSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Driver
         load_instance = True
-        exclude = ('cnh_encrypted',)
+        exclude = ('cnh_encrypted', 'driver_status_id')
     
     user_id = fields.Integer(required=True)           # Mandatory
     cnh = fields.String(required=True)                # Mandatory
