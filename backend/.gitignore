@@ -51,3 +51,9 @@ htmlcov/
 pip-wheel-metadata/
 dist/
 build/
+
+
+# Ignorar arquivos e pastas relacionados ao banco de dados local e configurações específicas do ambiente Flask
+instance/
+*.sqlite
+*.db

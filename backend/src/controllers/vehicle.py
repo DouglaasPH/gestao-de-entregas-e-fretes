@@ -26,7 +26,7 @@ def _create_vehicle():
         plate=data['plate'],
         model=data['model'],
         vehicle_type_id=data['vehicle_type_id'],
-        capacity=data['capacity'],
+        capacity_per_kilo=data['capacity_per_kilo'],
         driver_id=data['driver_id']
     )
     db.session.add(vehicle)
@@ -67,7 +67,7 @@ def update_vehicle(vehicle_id):
     vehicle = db.get_or_404(Vehicle, vehicle_id)
     data = request.json
     
-    for key in ['plate', 'model', 'vehicle_type_id', 'capacity', 'driver_id']:
+    for key in ['plate', 'model', 'vehicle_type_id', 'capacity_per_kilo', 'driver_id']:
         if key in data:
             setattr(vehicle, key, data[key])
 
