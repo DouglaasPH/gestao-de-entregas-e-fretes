@@ -12,8 +12,8 @@ from src.views.vehicle_type import VehicleTypeSchema, CreateVehicleTypeSchema
 
 app = Blueprint('vehicle_type', __name__, url_prefix='/vehicle_type')
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 def _create_vehicle_type():
     vehicle_type_schema = CreateVehicleTypeSchema()
     
@@ -30,8 +30,8 @@ def _create_vehicle_type():
     return { 'message': 'new vehicle type created!' }, HTTPStatus.CREATED
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 def _list_vehicle_type():
     query = db.select(Vehicle_type)
     vehicle_type = db.session.execute(query).scalars().all()
@@ -47,8 +47,8 @@ def list_or_create_vehicle_type():
         return { 'vehicle_type': _list_vehicle_type() }, HTTPStatus.OK
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 @app.route('/<int:vehicle_type_id>')
 def get_user(vehicle_type_id):
     vehicle_type = db.get_or_404(Vehicle_type, vehicle_type_id)
@@ -56,8 +56,8 @@ def get_user(vehicle_type_id):
     return vehicle_type_schema.dump(vehicle_type)
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 @app.route('/<int:vehicle_type_id>', methods=['PATCH'])
 def update_vehicle_type(vehicle_type_id):
     vehicle_type = db.get_or_404(Vehicle_type, vehicle_type_id)
@@ -71,8 +71,8 @@ def update_vehicle_type(vehicle_type_id):
     return { 'message': 'Vehicle Type updated.' }, HTTPStatus.OK
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 @app.route('/<int:vehicle_type_id>', methods=['DELETE'])
 def delete_vehicle_type(vehicle_type_id):
     vehicle_type = db.get_or_404(Vehicle_type, vehicle_type_id)

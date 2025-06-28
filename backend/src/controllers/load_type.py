@@ -12,8 +12,8 @@ from src.views.load_type import LoadTypeSchema, CreateLoadTypeSchema
 
 app = Blueprint('load_type', __name__, url_prefix='/load_type')
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 def _create_load_type():
     load_type_schema = CreateLoadTypeSchema()
     
@@ -30,8 +30,8 @@ def _create_load_type():
     return { 'message': 'new load type created!' }, HTTPStatus.CREATED
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 def _list_load_type():
     query = db.select(Load_type)
     load_type = db.session.execute(query).scalars().all()
@@ -47,8 +47,8 @@ def list_or_create_load_type():
         return { 'load_type': _list_load_type() }, HTTPStatus.OK
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 @app.route('/<int:load_type_id>')
 def get_load_type_by_id(load_type_id):
     load_type = db.get_or_404(Load_type, load_type_id)
@@ -56,8 +56,8 @@ def get_load_type_by_id(load_type_id):
     return load_type_schema.dump(load_type)
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 @app.route('/<int:load_type_id>', methods=['PATCH'])
 def update_load_type(load_type_id):
     load_type = db.get_or_404(Load_type, load_type_id)
@@ -71,8 +71,8 @@ def update_load_type(load_type_id):
     return { 'message': 'Load type updated.' }, HTTPStatus.OK
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 @app.route('/<int:load_type_id>', methods=['DELETE'])
 def delete_load_type(load_type_id):
     load_type = db.get_or_404(Load_type, load_type_id)
