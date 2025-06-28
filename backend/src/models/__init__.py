@@ -7,9 +7,9 @@ from .driver import Driver
 from .vehicle_type import Vehicle_type
 from .vehicle import Vehicle
 from .load_type import Load_type
-from .status_type_for_orders import Status_type_for_orders
+from .orders_status import Orders_status
 from .orders import Orders
 
-__all__ = ['db', 'Role', 'User', 'Points_of_sale', 'Driver_status', 'Driver', 'Vehicle_type', 'Vehicle', 'Load_type', 'Status_type_for_orders', 'Orders']
+__all__ = ['db', 'Role', 'User', 'Points_of_sale', 'Driver_status', 'Driver', 'Vehicle_type', 'Vehicle', 'Load_type', 'Orders_status', 'Orders']
 
 from src.models import *
