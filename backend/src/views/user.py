@@ -28,4 +28,4 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
     telephone = fields.String()
     email = fields.String()
     
-    role = ma.Nested(RoleSchema, only=('id', 'name'))
+    role = ma.Nested(RoleSchema, only=('id', 'name')) 

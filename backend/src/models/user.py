@@ -22,6 +22,7 @@ class User(db.Model):
 
     role: Mapped["Role"] = relationship(back_populates='user')
     driver: Mapped["Driver"] = relationship(back_populates='user')
+    orders: Mapped[list["Orders"]] = relationship(back_populates='user')
     
     
     # Deliver encrypted data to the database and return decrypted    
