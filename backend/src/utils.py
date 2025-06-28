@@ -1,7 +1,10 @@
 from http import HTTPStatus
-from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask import abort
+
 from src.models import User, db
 from functools import wraps
+from src.models import User
 
 
 def requires_role(roles_name_array):
@@ -32,3 +35,33 @@ def requires_role(roles_name_array):
             return f(*args, **kwargs)  # Proceed if the user has the required role
         return wrapped
     return decorator
+
+
+@jwt_required()
+def get_authenticated_user():
+    user_id = get_jwt_identity()
+
+    return User.query.get_or_404(user_id)
+
+
+def is_self_user(user_id_to_modify_or_views):
+    current_user = get_authenticated_user()
+
+    if current_user.id != user_id_to_modify_or_views:
+        return False
+    else:
+        return True
+
+
+def get_authorized_user_or_abort(user_id_to_modify_or_views):
+    current_user = get_authenticated_user()
+    
+    # Admin can modify any user
+    if current_user.role.name == 'admin':
+        return  db.get_or_404(User, user_id_to_modify_or_views)
+    else:
+        # Others can only modify themselves
+        if not is_self_user(user_id_to_modify_or_views):
+            abort(HTTPStatus.FORBIDDEN, description='You can only edit your own data.')
+        else:
+            return current_user

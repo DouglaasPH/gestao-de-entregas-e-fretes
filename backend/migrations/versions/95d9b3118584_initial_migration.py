@@ -110,6 +110,61 @@ def upgrade():
     sa.ForeignKeyConstraint(['vehicle_id'], ['vehicle.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    
+    driver_status_table = sa.table(
+        'driver_status',
+        sa.column('name', sa.String),
+    )
+    op.bulk_insert(driver_status_table, [
+        { 'name': 'admin' },
+        { 'name': 'manager' },
+        { 'name': 'operator' },
+        { 'name': 'driver' }
+    ])
+    load_type_table = sa.table(
+        'load_type',
+        sa.column('name', sa.String),
+    )
+    op.bulk_insert(load_type_table, [
+        { 'name': 'medicines' },
+        { 'name': 'heat-sensitive drugs' },
+        { 'name': 'cosmetics' },
+        { 'name': 'supplements' },
+        { 'name': 'hospital products' },
+        { 'name': 'medical equipment' },
+        { 'name': 'hygiene and well-being' },
+        { 'name': 'others' }
+    ])
+    role_table = sa.table(
+        'role',
+        sa.column('name', sa.String),
+    )
+    op.bulk_insert(role_table, [
+        { 'name': 'admin' },
+        { 'name': 'manager' },
+        { 'name': 'operator' },
+        { 'name': 'driver' }
+    ])
+    status_type_for_orders_table = sa.table(
+        'status_type_for_orders',
+        sa.column('name', sa.String),
+    )
+    op.bulk_insert(status_type_for_orders_table, [
+        { 'name': 'pending' },
+        { 'name': 'in transit' },
+        { 'name': 'delivered' },
+        { 'name': 'canceled' }
+    ])
+    vehicle_type_table = sa.table(
+        'vehicle_type',
+        sa.column('name', sa.String),
+    )
+    op.bulk_insert(vehicle_type_table, [
+        { 'name': 'van' },
+        { 'name': 'light truck' },
+        { 'name': 'medium truck' },
+        { 'name': 'heavy truck' }
+    ])
     # ### end Alembic commands ###
 
 

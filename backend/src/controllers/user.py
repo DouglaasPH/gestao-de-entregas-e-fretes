@@ -9,14 +9,13 @@ import hashlib
 
 from src.app.app import bcrypt
 from src.models import User, db
-from src.utils import requires_role
-from src.views.user import CreateUserSchema, UserSchema
+from src.utils import requires_role, get_authenticated_user, get_authorized_user_or_abort, is_self_user
+from src.views.user import CreateUserSchema, UserSchema, UserUpdateByAdminSchema, UserUpdateByOthersSchema
 
 
 app = Blueprint('user', __name__, url_prefix='/users')
 
-@jwt_required()
-@requires_role(['admin'])
+   
 def _create_user():
     user_schema = CreateUserSchema()
     
@@ -39,8 +38,6 @@ def _create_user():
     return { 'message': 'User created!' }, HTTPStatus.CREATED
 
 
-# @jwt_required()
-# @requires_role(['admin'])
 def _list_users():
     query = db.select(User)
     users = db.session.execute(query).scalars().all()
@@ -48,6 +45,8 @@ def _list_users():
     return user_schema.dump(users)
     
 
+@jwt_required()
+@requires_role(['admin'])
 @app.route('/', methods=['GET', 'POST'])
 def list_or_create_user():
     if request.method == 'POST':
@@ -57,33 +56,49 @@ def list_or_create_user():
 
 
 @jwt_required()
-@requires_role(['admin'])
-@app.route('/<int:user_id>')
-def get_user(user_id):
-    user = db.get_or_404(User, user_id)
+@requires_role(['admin', 'manager', 'operator', 'driver'])
+@app.route('/<int:user_to_modify>')
+def get_user(user_to_modify):
+    current_user = get_authenticated_user()
     user_schema = UserSchema()
-    return user_schema.dump(user)
+    
+    if (current_user.role.name in ['manager', 'operator', 'driver'] and is_self_user(user_to_modify)) or current_user.role.name in ['admin']:
+        user = db.get_or_404(User, user_to_modify)
+        return user_schema.dump(user)
+    else:
+        return { 'message': 'You do not have access.' }, HTTPStatus.FORBIDDEN
 
 
 @jwt_required()
-@requires_role(['admin'])
+@requires_role(['admin', 'manager', 'operator', 'driver'])
 @app.route('/<int:user_id>', methods=['PATCH'])
 def update_user(user_id):
-    user = db.get_or_404(User, user_id)
-    data = request.json
+    current_user = get_authenticated_user()
     
-    for key in ['name', 'cpf', 'telephone', 'email']:
-        if key in data:
-            setattr(user, key, data[key])
-            if key == 'email':
-                user.email_hash = hashlib.sha256(data['email'].encode()).hexdigest()
-
-    if 'password' in data:
-        user.password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
-
-    if 'role_id' in data:
-        user.role_id = data['role_id']
+    try:
+        if current_user.role.name in ['manager', 'operator', 'driver']:
+            user_schema = UserUpdateByOthersSchema()
+            data = user_schema.load(request.json)
+            user_to_modify = current_user
+        else:
+            user_schema = UserUpdateByAdminSchema()
+            data = user_schema.load(request.json)
+            user_to_modify = get_authorized_user_or_abort(user_id)
+    except ValidationError as exc:
+        return exc.messages, HTTPStatus.UNPROCESSABLE_ENTITY
     
+    
+    for key in data:
+        if key == 'password':
+            user_to_modify.password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+        elif key == 'email':
+            user_to_modify.email = data['email']
+            user_to_modify.email_hash = hashlib.sha256(data['email'].encode()).hexdigest()
+        elif key == 'role_id':
+            user_to_modify.role_id = data['role_id']
+        else:
+            setattr(user_to_modify, key, data[key])
+
     db.session.commit()
     
     return { 'message': 'User updated.' }, HTTPStatus.OK

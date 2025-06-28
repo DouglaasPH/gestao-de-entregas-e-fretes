@@ -12,8 +12,8 @@ from src.views.orders_status import OrdersStatusSchema, CreateOrderStatusSchema
 
 app = Blueprint('orders_status', __name__, url_prefix='/orders_status')
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 def _create_orders_status():
     orders_status_schema = CreateOrderStatusSchema()
     
@@ -30,8 +30,8 @@ def _create_orders_status():
     return { 'message': 'new order status created!' }, HTTPStatus.CREATED
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 def _list_orders_status():
     query = db.select(Orders_status)
     orders_status = db.session.execute(query).scalars().all()
@@ -47,8 +47,8 @@ def list_or_create_orders_status():
         return { 'orders_status': _list_orders_status() }, HTTPStatus.OK
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 @app.route('/<int:orders_status_id>')
 def get_user(orders_status_id):
     orders_status = db.get_or_404(Orders_status, orders_status_id)
@@ -56,8 +56,8 @@ def get_user(orders_status_id):
     return orders_status_schema.dump(orders_status)
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 @app.route('/<int:orders_status_id>', methods=['PATCH'])
 def update_orders_status(orders_status_id):
     orders_status = db.get_or_404(Orders_status, orders_status_id)
@@ -71,8 +71,8 @@ def update_orders_status(orders_status_id):
     return { 'message': 'order status updated.' }, HTTPStatus.OK
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 @app.route('/<int:orders_status_id>', methods=['DELETE'])
 def delete_orders_status(orders_status_id):
     orders_status = db.get_or_404(Orders_status, orders_status_id)
