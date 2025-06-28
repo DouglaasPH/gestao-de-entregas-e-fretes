@@ -28,4 +28,27 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
     telephone = fields.String()
     email = fields.String()
     
-    role = ma.Nested(RoleSchema, only=('id', 'name')) 
+    role = ma.Nested(RoleSchema, only=('id', 'name'))
+
+
+class UserUpdateByAdminSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        only = ('name', 'cpf', 'telephone', 'email', 'password', 'role_id')  # Aceita apenas esses valores
+        unknown = RAISE                                                      # Disparar erro se vier campo não permitido
+
+    name = fields.String(required=False)
+    cpf = fields.String(required=False)
+    telephone = fields.String(required=False)
+    email = fields.String(required=False)
+    password = fields.String(required=False)
+    role_id = fields.Integer(required=False)
+
+
+class UserUpdateByOthersSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        only = ('telephone', 'email', 'password',)  # Aceita apenas esses valores
+        unknown = RAISE                             # Disparar erro se vier campo não permitido
+
+    telephone = fields.String(required=False)
+    email = fields.String(required=False)
+    password = fields.String(required=False)
