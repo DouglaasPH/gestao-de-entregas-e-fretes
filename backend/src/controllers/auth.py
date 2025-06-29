@@ -1,11 +1,13 @@
+import hashlib
 from http import HTTPStatus
 
 from flask import Blueprint, request
 from flask_jwt_extended import create_access_token
-import hashlib
+from marshmallow import ValidationError
 
 from src.models import User, db
 from src.app.app import bcrypt
+from src.views.auth import AuthSchema
 
 app = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -17,15 +19,18 @@ def _valid_password(password_hash, password_raw):
 
 @app.route('/login', methods=['POST'])
 def login():
-    data = request.json
+    auth_schema = AuthSchema()
     
-    email = data.get('email', None)
-    password = data.get('password', None)
-    email_hash_imput = _valid_email_hashlib(email)
+    try:
+        data = auth_schema.load(request.json)
+    except ValidationError as exc:
+        return exc.messages, HTTPStatus.UNPROCESSABLE_ENTITY
+        
+    email_hash_imput = _valid_email_hashlib(data['email'])
     
     user = db.session.execute(db.select(User).where(User.email_hash == email_hash_imput)).scalar()
     
-    if not user or not _valid_password(user.password, password):
+    if not user or not _valid_password(user.password, data['password']):
         return { 'message': 'Bad username or password' }, HTTPStatus.UNAUTHORIZED
 
     access_token = create_access_token(identity=str(user.id))
