@@ -74,3 +74,12 @@ def can_access_user(user_id_to_modify):
             return True
     else:
         return False # Do outro lado irá exibir: { 'message': 'You do not have access.' }, HTTPStatus.FORBIDDEN
+    
+    
+def can_access_driver(user_id_to_view):
+    current_user = get_authenticated_user()
+    
+    if (current_user.role.name == 'driver' and is_self_user(user_id_to_view)) or (current_user.role.name in ['admin', 'manager', 'operator']):
+        return True
+    else:
+        return False
