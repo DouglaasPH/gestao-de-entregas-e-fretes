@@ -32,8 +32,32 @@ class OrderSchema(ma.SQLAlchemyAutoSchema):
         exclude = ('points_of_sale_id', 'driver_id', 'vehicle_id', 'load_type_id', 'order_status_id', 'created_by')         # Não retornar tabelas
     
     point_of_sale = ma.Nested(PointOfSaleSchema)
-    driver_id = ma.Nested(DriverSchema)
+    driver = ma.Nested(DriverSchema)
     vehicle = ma.Nested(VehicleSchema)
     load_type = ma.Nested(LoadTypeSchema)
     order_status = ma.Nested(OrdersStatusSchema)
     created_by = ma.Nested(UserSchema)
+
+
+class OrderUpdateSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        only = ('points_of_sale_id', 'driver_id', 'vehicle_id', 'weight_kg', 'distance_km', 'load_type_id', 'order_status_id', 'shipping_cost', 'created_by')
+        unknown = RAISE
+        
+    points_of_sale_id = fields.Integer(required=False)
+    driver_id = fields.Integer(required=False)
+    vehicle_id = fields.Integer(required=False)
+    weight_kg = fields.Integer(required=False)
+    distance_km = fields.Integer(required=False)
+    load_type_id = fields.Integer(required=False)
+    order_status_id = fields.Integer(required=False)
+    shipping_cost = fields.Integer(required=False)
+    created_by = fields.Integer(required=False)
+
+
+class OrderStatusIdUpdateSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        only = ('order_status_id',)
+        unknown = RAISE
+        
+    order_status_id = fields.Integer(required=True)
