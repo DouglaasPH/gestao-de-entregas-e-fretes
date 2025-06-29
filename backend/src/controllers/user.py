@@ -1,4 +1,3 @@
-import os
 from http import HTTPStatus
 
 from flask import Blueprint, request
@@ -9,7 +8,7 @@ import hashlib
 
 from src.app.app import bcrypt
 from src.models import User, db
-from src.utils import requires_role, get_authenticated_user, get_authorized_user_or_abort, is_self_user
+from src.utils import requires_role, get_authenticated_user, get_authorized_user_or_abort, can_access_user
 from src.views.user import CreateUserSchema, UserSchema, UserUpdateByAdminSchema, UserUpdateByOthersSchema
 
 
@@ -57,13 +56,12 @@ def list_or_create_user():
 
 @jwt_required()
 @requires_role(['admin', 'manager', 'operator', 'driver'])
-@app.route('/<int:user_to_modify>')
-def get_user(user_to_modify):
-    current_user = get_authenticated_user()
+@app.route('/<int:user_id_to_view>')
+def get_user(user_id_to_view):
     user_schema = UserSchema()
     
-    if (current_user.role.name in ['manager', 'operator', 'driver'] and is_self_user(user_to_modify)) or current_user.role.name in ['admin']:
-        user = db.get_or_404(User, user_to_modify)
+    if can_access_user(user_id_to_view):
+        user = db.get_or_404(User, user_id_to_view)
         return user_schema.dump(user)
     else:
         return { 'message': 'You do not have access.' }, HTTPStatus.FORBIDDEN

@@ -65,3 +65,12 @@ def get_authorized_user_or_abort(user_id_to_modify_or_views):
             abort(HTTPStatus.FORBIDDEN, description='You can only edit your own data.')
         else:
             return current_user
+
+
+def can_access_user(user_id_to_modify):
+    current_user = get_authenticated_user()
+    
+    if (current_user.role.name in ['manager', 'operator', 'driver'] and is_self_user(user_id_to_modify)) or current_user.role.name in ['admin']:
+            return True
+    else:
+        return False # Do outro lado irá exibir: { 'message': 'You do not have access.' }, HTTPStatus.FORBIDDEN
