@@ -5,8 +5,8 @@ from src.views.points_of_sale import PointOfSaleSchema
 from src.views.driver import DriverSchema
 from src.views.vehicle import VehicleSchema
 from src.views.load_type import LoadTypeSchema
-from backend.src.views.orders_status import OrdersStatusSchema
-from backend.src.views.user import UserSchema
+from src.views.orders_status import OrdersStatusSchema
+from src.views.user import UserSchema
 
 class CreateOrderSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
