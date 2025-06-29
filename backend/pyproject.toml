@@ -16,7 +16,6 @@ dependencies = [
     "flask-marshmallow",
     "marshmallow-sqlalchemy",
     "apispec-webframeworks",
-    "flask-apispec[swagger]",
     "cryptography",
     "python-dotenv",
 ]
