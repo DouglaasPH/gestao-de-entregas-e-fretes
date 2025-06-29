@@ -30,3 +30,15 @@ class VehicleSchema(ma.SQLAlchemyAutoSchema):
 
     vehicle_type = ma.Nested(VehicleTypeSchema)
     driver = ma.Nested(DriverSchema)
+
+
+class VehicleUpdateSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        only = ('plate', 'model', 'vehicle_type_id', 'capacity_per_kilo', 'driver_id')      # Aceita apenas esses valores
+        unknown = RAISE                                                                     # Disparar erro se vier campo não permitido
+        
+    plate = fields.String(required=False)
+    model = fields.String(required=False)
+    vehicle_type_id = fields.Integer(required=False)
+    capacity_per_kilo = fields.String(required=False)
+    driver_id = fields.Integer(required=False)
