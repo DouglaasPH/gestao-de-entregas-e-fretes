@@ -1,4 +1,3 @@
-import os
 from http import HTTPStatus
 
 from flask import Blueprint, request
@@ -7,13 +6,13 @@ from sqlalchemy import inspect
 from marshmallow import ValidationError
 
 from src.models import Vehicle, db
-from src.utils import requires_role
-from src.views.vehicle import VehicleSchema, CreateVehicleSchema
+from src.utils import requires_role, can_access_user
+from src.views.vehicle import VehicleSchema, CreateVehicleSchema, VehicleUpdateSchema
 
 app = Blueprint('vehicle', __name__, url_prefix='/vehicle')
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 def _create_vehicle():
     vehicle_schema = CreateVehicleSchema()
     
@@ -34,8 +33,8 @@ def _create_vehicle():
     return { 'message': 'new vehicle created!' }, HTTPStatus.CREATED
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin', 'manager', 'operator'])
 def _list_vehicle():
     query = db.select(Vehicle)
     vehicle = db.session.execute(query).scalars().all()
@@ -51,33 +50,38 @@ def list_or_create_vehicle():
         return { 'vehicle': _list_vehicle() }, HTTPStatus.OK
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin', 'manager', 'operator', 'driver'])
 @app.route('/<int:vehicle_id>')
 def get_vehicle(vehicle_id):
     vehicle = db.get_or_404(Vehicle, vehicle_id)
-    vehicle_schema = VehicleSchema()
-    return vehicle_schema.dump(vehicle)
+    driver_user_id = vehicle.driver.user.id    
+    
+    if not can_access_user(driver_user_id):
+        return { 'message': 'You do not have access.' }, HTTPStatus.FORBIDDEN
+    else:
+        vehicle_schema = VehicleSchema()
+        return vehicle_schema.dump(vehicle)
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin', 'manager', 'operator'])
 @app.route('/<int:vehicle_id>', methods=['PATCH'])
 def update_vehicle(vehicle_id):
     vehicle = db.get_or_404(Vehicle, vehicle_id)
-    data = request.json
+    vehicle_schema = VehicleUpdateSchema()
+    data = vehicle_schema.load(request.json)
     
-    for key in ['plate', 'model', 'vehicle_type_id', 'capacity_per_kilo', 'driver_id']:
-        if key in data:
-            setattr(vehicle, key, data[key])
+    for key in data:
+        setattr(vehicle, key, data[key])
 
     db.session.commit()
     
     return { 'message': 'Vehicle updated.' }, HTTPStatus.OK
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 @app.route('/<int:vehicle_id>', methods=['DELETE'])
 def delete_vehicle(vehicle_id):
     vehicle = db.get_or_404(Vehicle, vehicle_id)

@@ -31,7 +31,7 @@ def _create_orders_status():
 
 
 @jwt_required()
-@requires_role(['admin'])
+@requires_role(['admin', 'manager', 'operator'])
 def _list_orders_status():
     query = db.select(Orders_status)
     orders_status = db.session.execute(query).scalars().all()
@@ -48,7 +48,7 @@ def list_or_create_orders_status():
 
 
 @jwt_required()
-@requires_role(['admin'])
+@requires_role(['admin', 'manager', 'operator'])
 @app.route('/<int:orders_status_id>')
 def get_user(orders_status_id):
     orders_status = db.get_or_404(Orders_status, orders_status_id)

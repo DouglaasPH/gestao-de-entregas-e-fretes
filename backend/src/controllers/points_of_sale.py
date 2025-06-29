@@ -12,8 +12,8 @@ from src.views.points_of_sale import CreatePointOfSaleSchema, PointOfSaleSchema
 
 app = Blueprint('point_of_sale', __name__, url_prefix='/points_of_sale')
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin', 'manager'])
 def _create_point_of_sale():
     point_of_sale_schema = CreatePointOfSaleSchema()
     
@@ -32,8 +32,8 @@ def _create_point_of_sale():
     return { 'message': 'Point of sale created!' }, HTTPStatus.CREATED
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin', 'manager', 'operator'])
 def _list_points_of_sale():
     query = db.select(Points_of_sale)
     points_of_sale = db.session.execute(query).scalars().all()
@@ -49,17 +49,17 @@ def list_or_create_point_of_sale():
         return { 'points_of_sale': _list_points_of_sale() }, HTTPStatus.OK
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin', 'manager', 'operator'])
 @app.route('/<int:point_of_sale_id>')
-def get_user(point_of_sale_id):
+def get_point_of_sale(point_of_sale_id):
     points_of_sale = db.get_or_404(Points_of_sale, point_of_sale_id)
     points_of_sale_schema = PointOfSaleSchema()
     return points_of_sale_schema.dump(points_of_sale)
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin', 'manager'])
 @app.route('/<int:point_of_sale_id>', methods=['PATCH'])
 def update_point_of_sale(point_of_sale_id):
     point_of_sale = db.get_or_404(Points_of_sale, point_of_sale_id)
@@ -74,10 +74,10 @@ def update_point_of_sale(point_of_sale_id):
     return { 'message': 'Point of sale updated.' }, HTTPStatus.OK
 
 
-# @jwt_required()
-# @requires_role(['admin'])
+@jwt_required()
+@requires_role(['admin'])
 @app.route('/<int:point_of_sale_id>', methods=['DELETE'])
-def delete_user(point_of_sale_id):
+def delete_point_of_sale(point_of_sale_id):
     point_of_sale = db.get_or_404(Points_of_sale, point_of_sale_id)
     db.session.delete(point_of_sale)
     db.session.commit()

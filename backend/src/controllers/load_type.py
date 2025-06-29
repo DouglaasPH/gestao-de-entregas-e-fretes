@@ -31,7 +31,7 @@ def _create_load_type():
 
 
 @jwt_required()
-@requires_role(['admin'])
+@requires_role(['admin', 'manager', 'operator'])
 def _list_load_type():
     query = db.select(Load_type)
     load_type = db.session.execute(query).scalars().all()
@@ -48,7 +48,7 @@ def list_or_create_load_type():
 
 
 @jwt_required()
-@requires_role(['admin'])
+@requires_role(['admin', 'manager', 'operator'])
 @app.route('/<int:load_type_id>')
 def get_load_type_by_id(load_type_id):
     load_type = db.get_or_404(Load_type, load_type_id)
